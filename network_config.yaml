@@ -1,15 +1,7 @@
 ---
 - name: Manage Cisco Device Configurations with Ansible
-  hosts: cisco_devices  # Group in your inventory
+  hosts: R1  # Group in your inventory
   gather_facts: false
-  connection: ansible.netcommon.network_cli
-  vars:
-    ansible_network_os: cisco.ios.ios
-    ansible_user: your_username
-    ansible_ssh_pass: your_password
-    ansible_become: yes
-    ansible_become_method: enable
-    ansible_become_pass: your_enable_secret
 
   tasks:
     - name: Gather device facts (for asset management/inventory)
@@ -21,78 +13,78 @@
       debug:
         msg: "Device: {{ device_facts.ansible_facts.ansible_net_hostname }} | Serial: {{ device_facts.ansible_facts.ansible_net_serialnum }} | Model: {{ device_facts.ansible_facts.ansible_net_model }}"
 
-    - name: Configure VLANs
-      cisco.ios.ios_vlans:
-        config:
-          - name: Management
-            vlan_id: 10
-            state: active
-            shutdown: disabled
-          - name: Data
-            vlan_id: 20
-            state: active
-        state: merged  # Adds/updates VLANs without deleting others
+    # - name: Configure VLANs
+    #   cisco.ios.ios_vlans:
+    #     config:
+    #       - name: Management
+    #         vlan_id: 10
+    #         state: active
+    #         shutdown: disabled
+    #       - name: Data
+    #         vlan_id: 20
+    #         state: active
+    #     state: merged  # Adds/updates VLANs without deleting others
 
-    - name: Configure Interface Settings (e.g., access VLAN and description)
-      cisco.ios.ios_interfaces:
-        config:
-          - name: GigabitEthernet1/0/1
-            description: Connected to Server
-            enabled: true
-            mode: access
-        state: merged
+     - name: Configure Interface Settings (e.g., access VLAN and description)
+       cisco.ios.ios_interfaces:
+         config:
+           - name: GigabitEthernet1/0/1
+             description: Connected to Server
+             enabled: true
+             mode: access
+         state: merged
 
-    - name: Assign VLAN to Interface
-      cisco.ios.ios_l3_interfaces:  # Or use ios_interface for Layer 2
-        config:
-          - name: GigabitEthernet1/0/1
-            ipv4:  # Optional IP if needed
-              - address: 192.168.10.2/24
-        state: merged
-      # For switchport access VLAN:
-      cisco.ios.ios_config:
-        lines:
-          - switchport mode access
-          - switchport access vlan 10
-        parents: interface GigabitEthernet1/0/1
+    # - name: Assign VLAN to Interface
+    #   cisco.ios.ios_l3_interfaces:  # Or use ios_interface for Layer 2
+    #     config:
+    #       - name: GigabitEthernet1/0/1
+    #         ipv4:  # Optional IP if needed
+    #           - address: 192.168.10.2/24
+    #     state: merged
+    #   # For switchport access VLAN:
+    #   cisco.ios.ios_config:
+    #     lines:
+    #       - switchport mode access
+    #       - switchport access vlan 10
+    #     parents: interface GigabitEthernet1/0/1
 
-    - name: Configure OSPF
-      cisco.ios.ios_ospfv2:
-        config:
-          processes:
-            - process_id: 1
-              router_id: 1.1.1.1
-              auto_cost:
-                reference_bandwidth: 10000
-              networks:
-                - address: 192.168.10.0
-                  wildcard_mask: 0.0.0.255
-                  area: 0
-              passive_interfaces:
-                - name: Loopback0
-        state: merged
+    # - name: Configure OSPF
+    #   cisco.ios.ios_ospfv2:
+    #     config:
+    #       processes:
+    #         - process_id: 1
+    #           router_id: 1.1.1.1
+    #           auto_cost:
+    #             reference_bandwidth: 10000
+    #           networks:
+    #             - address: 192.168.10.0
+    #               wildcard_mask: 0.0.0.255
+    #               area: 0
+    #           passive_interfaces:
+    #             - name: Loopback0
+    #     state: merged
 
-    - name: Configure ACLs (e.g., standard ACL for management)
-      cisco.ios.ios_acls:
-        config:
-          - afi: ip
-            acls:
-              - name: MGMT_ACL
-                aces:
-                  - grant: permit
-                    source:
-                      address: 10.0.0.0
-                      wildcard_bits: 0.255.255.255
-                    destination:
-                      any: true
-                  - grant: deny
-                    source:
-                      any: true
-                    log: true
-        state: merged
+    # - name: Configure ACLs (e.g., standard ACL for management)
+    #   cisco.ios.ios_acls:
+    #     config:
+    #       - afi: ip
+    #         acls:
+    #           - name: MGMT_ACL
+    #             aces:
+    #               - grant: permit
+    #                 source:
+    #                   address: 10.0.0.0
+    #                   wildcard_bits: 0.255.255.255
+    #                 destination:
+    #                   any: true
+    #               - grant: deny
+    #                 source:
+    #                   any: true
+    #                 log: true
+    #     state: merged
 
-    - name: Apply ACL to Interface (e.g., VTY or physical)
-      cisco.ios.ios_config:
-        lines:
-          - ip access-group MGMT_ACL in
-        parents: line vty 0 15
+    # - name: Apply ACL to Interface (e.g., VTY or physical)
+    #   cisco.ios.ios_config:
+    #     lines:
+    #       - ip access-group MGMT_ACL in
+    #     parents: line vty 0 15
