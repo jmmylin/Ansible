@@ -10,7 +10,7 @@ all:
         ansible_connection: ansible.netcommon.network_cli
         ansible_network_os: cisco.ios.ios
         ansible_user: ansible
-        ansible_ssh_pass:   # Avoid plain text; use --ask-pass instead or -k
+        # ansible_ssh_pass:   # Avoid plain text; use --ask-pass instead or -k
         ansible_become: yes
         ansible_become_method: enable
         # ansible_become_pass: your_enable_secret  # Use --ask-become-pass

@@ -1,0 +1,33 @@
+---
+- name: Manage Cisco Device Configurations with Ansible
+  hosts: cisco_devices
+  gather_facts: false
+
+  tasks:
+    - name: Gather device facts (for asset management/inventory)
+      cisco.ios.ios_facts:
+        gather_subset: all
+      register: device_facts
+
+    - name: Display basic asset info (hostname, serial, model)
+      debug:
+        msg: "Device: {{ device_facts.ansible_facts.ansible_net_hostname }} | Serial: {{ device_facts.ansible_facts.ansible_net_serialnum }} | Model: {{ device_facts.ansible_facts.ansible_net_model }}"
+
+    - name: Configure Interface Settings (descriptions, enabled)
+      cisco.ios.ios_interfaces:
+        config:
+          - name: "{{ item.name }}"
+            description: "{{ item.description | default(omit) }}"
+            enabled: "{{ item.enabled | default(omit) }}"
+        state: merged
+      loop: "{{ interface_configs }}"
+
+    - name: Configure Interface IPs (Layer 3)
+      cisco.ios.ios_l3_interfaces:
+        config:
+          - name: "{{ item.name }}"
+            ipv4:
+              - address: "{{ item.ipv4_address | default(omit) }}"
+        state: merged
+      loop: "{{ interface_configs }}"
+      when: item.ipv4_address is defined

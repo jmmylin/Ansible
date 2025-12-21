@@ -1,0 +1,4 @@
+---
+interface_configs:
+  enabled: true
+  mtu: 1500

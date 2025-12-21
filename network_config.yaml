@@ -13,6 +13,30 @@
       debug:
         msg: "Device: {{ device_facts.ansible_facts.ansible_net_hostname }} | Serial: {{ device_facts.ansible_facts.ansible_net_serialnum }} | Model: {{ device_facts.ansible_facts.ansible_net_model }}"
 
+    - name: Configure Interface IP
+      cisco.ios.ios_l3_interfaces:
+        config:
+          - name: GigabitEthernet0/1
+            ipv4:
+              - address: 10.1.6.1/24
+          - name: GigabitEthernet0/2
+            ipv4:
+              - address: 10.1.7.1/24
+        state: merged
+
+
+    - name: Merge provided configuration with device configuration
+      cisco.ios.ios_interfaces:
+        config:
+          - name: GigabitEthernet0/1
+            description: Connected to R6
+            enabled: true
+          - name: GigabitEthernet0/2
+            description: Connected to R7
+            enabled: true
+        state: merged
+
+
     # - name: Configure VLANs
     #   cisco.ios.ios_vlans:
     #     config:
@@ -25,14 +49,7 @@
     #         state: active
     #     state: merged  # Adds/updates VLANs without deleting others
 
-     - name: Configure Interface Settings (e.g., access VLAN and description)
-       cisco.ios.ios_interfaces:
-         config:
-           - name: GigabitEthernet1/0/1
-             description: Connected to Server
-             enabled: true
-             mode: access
-         state: merged
+
 
     # - name: Assign VLAN to Interface
     #   cisco.ios.ios_l3_interfaces:  # Or use ios_interface for Layer 2
