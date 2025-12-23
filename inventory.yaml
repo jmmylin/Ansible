@@ -6,6 +6,14 @@ all:
           ansible_host: 192.168.1.201
         R2:
           ansible_host: 192.168.1.202
+        R3:
+          ansible_host: 192.168.1.203
+        R4:
+          ansible_host: 192.168.1.204
+        R5:
+          ansible_host: 192.168.1.205
+        R6:
+          ansible_host: 192.168.1.206
       vars:
         ansible_connection: ansible.netcommon.network_cli
         ansible_network_os: cisco.ios.ios

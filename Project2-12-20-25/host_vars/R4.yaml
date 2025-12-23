@@ -1,0 +1,13 @@
+---
+interface_configs:
+  - name: GigabitEthernet0/0
+    description: MGMT
+    ipv4_address: 192.168.1.204/24
+
+  - name: GigabitEthernet0/1
+    description: Connects to R5
+    ipv4_address: 10.4.5.4/24
+
+  - name: GigabitEthernet0/3
+    description: Connects to R3
+    ipv4_address: 10.3.4.4/24

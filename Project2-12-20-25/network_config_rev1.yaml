@@ -18,7 +18,7 @@
         config:
           - name: "{{ item.name }}"
             description: "{{ item.description | default(omit) }}"
-            enabled: "{{ item.enabled | default(omit) }}"
+            enabled: true
         state: merged
       loop: "{{ interface_configs }}"
 

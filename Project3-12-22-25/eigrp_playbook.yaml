@@ -1,0 +1,47 @@
+---
+- name: Configure EIGRP on R2
+  hosts: R2
+  gather_facts: no
+
+  tasks:
+    - name: Clean and configure EIGRP on R2
+      cisco.ios.ios_config:
+        lines:
+          - eigrp router-id 2.2.2.2
+          - no auto-summary
+          - network 10.0.0.0 
+          - passive-interface default
+          - no passive-interface GigabitEthernet0/2
+        parents:
+          - router eigrp 100
+
+- name: Configure EIGRP on R3
+  hosts: R3
+  gather_facts: no
+  tasks:
+    - name: Clean and configure EIGRP on R3
+      cisco.ios.ios_config:
+        lines:
+          - eigrp router-id 3.3.3.3
+          - no auto-summary
+          - network 10.0.0.0
+          - passive-interface default
+          - no passive-interface GigabitEthernet0/2
+          - no passive-interface GigabitEthernet0/3
+        parents:
+          - router eigrp 100
+
+- name: Configure EIGRP on R4
+  hosts: R4
+  gather_facts: no
+  tasks:
+    - name: Clean and configure EIGRP on R4
+      cisco.ios.ios_config:
+        lines:
+          - eigrp router-id 4.4.4.4
+          - no auto-summary
+          - network 10.0.0.0
+          - passive-interface default
+          - no passive-interface GigabitEthernet0/3
+        parents:
+          - router eigrp 100

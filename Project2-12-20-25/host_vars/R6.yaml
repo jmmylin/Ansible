@@ -1,0 +1,9 @@
+---
+interface_configs:
+  - name: GigabitEthernet0/0
+    description: MGMT
+    ipv4_address: 192.168.1.206/24
+
+  - name: GigabitEthernet0/1
+    description: Connects to R1
+    ipv4_address: 10.1.6.6/24
